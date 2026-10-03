@@ -1,0 +1,2 @@
+ALTER TABLE "workflow_stages" ADD COLUMN "version" bigint DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "workflow_stages" ADD CONSTRAINT "workflow_stages_version_valid" CHECK ("workflow_stages"."version" between 0 and 9007199254740991);

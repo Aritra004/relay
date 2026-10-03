@@ -1,0 +1,2 @@
+ALTER TABLE "work_items" DROP CONSTRAINT "work_items_title_valid";--> statement-breakpoint
+ALTER TABLE "work_items" ADD CONSTRAINT "work_items_title_valid" CHECK (char_length("work_items"."title") between 0 and 300);
