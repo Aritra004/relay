@@ -79,8 +79,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
         finally { setBusy(false); }
       }}>Resend code</button>}
       <p><Link href={signUp ? "/auth/sign-in" : "/auth/sign-up"}>{signUp ? "Already have an account? Sign in" : "New to Relay? Create an account"}</Link></p>
-      <p className="account-local-note">Your local workspace and pending changes stay on this device.</p>
-      <Link href="/">Continue in your local workspace →</Link>
+      <p className="account-local-note">Workspaces cached on this device and their pending changes stay here when you sign in.</p>
     </main>
   );
 }

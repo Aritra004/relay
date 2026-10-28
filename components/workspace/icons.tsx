@@ -16,7 +16,9 @@ type IconName =
   | "cloud-off"
   | "refresh"
   | "alert-circle"
-  | "person";
+  | "person"
+  | "hard-drive"
+  | "cloud";
 
 const iconNames = {
   grid: "grid",
@@ -34,6 +36,8 @@ const iconNames = {
   refresh: "refresh-cw",
   "alert-circle": "alert-circle",
   person: "user",
+  "hard-drive": "hard-drive",
+  cloud: "cloud",
 } satisfies Record<IconName, keyof typeof featherIcons>;
 
 type IconProps = Omit<
@@ -64,21 +68,3 @@ export function Icon({ name, className, ...props }: IconProps) {
   );
 }
 
-export function RelayMark() {
-  return (
-    <svg
-      width="26"
-      height="26"
-      viewBox="0 0 26 26"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M5 7h10a5 5 0 0 1 0 10H5m10-10v15M5 3v19"
-        stroke="currentColor"
-        strokeWidth="2.5"
-      />
-      <circle cx="5" cy="7" r="2.5" fill="currentColor" />
-    </svg>
-  );
-}

@@ -8,13 +8,8 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import {
-  createWorkspaceStore,
-  type WorkspaceState,
-  type WorkspaceStore,
-} from "./workspace-store";
+import type { WorkspaceState, WorkspaceStore } from "./workspace-store";
 import { OfflineShell } from "./offline-shell";
-import { WorkspaceDeveloperTools } from "./workspace-developer-tools";
 import { startWorkspaceSync } from "../../lib/workspace-sync";
 import { startWorkspaceRealtime } from "../../lib/workspace-realtime";
 import { startWorkspacePresence } from "../../lib/workspace-presence";
@@ -26,9 +21,9 @@ export function WorkspaceProvider({
   store: suppliedStore,
 }: {
   children: ReactNode;
-  store?: WorkspaceStore;
+  store: WorkspaceStore;
 }) {
-  const [store] = useState(() => suppliedStore ?? createWorkspaceStore());
+  const [store] = useState(() => suppliedStore);
   const [recoveryError, setRecoveryError] = useState<string | null>(null);
   const state = useSyncExternalStore(
     store.subscribe,
@@ -137,19 +132,12 @@ export function WorkspaceProvider({
           className="workspace-loading"
           aria-busy={state.restoration === "loading"}
         >
-          <p className="eyebrow">RELAY / LOCAL WORKSPACE</p>
+          <p className="eyebrow">RELAY / WORKSPACE</p>
           <p role="status">
             {state.restoration === "loading"
               ? "Restoring your workspace…"
               : "Your workspace could not be restored. Stored data has been preserved."}
           </p>
-          {process.env.NODE_ENV === "development" &&
-            state.restoration === "error" && (
-              <details className="sync-inspector-preview">
-                <summary>Development tools</summary>
-                <WorkspaceDeveloperTools />
-              </details>
-            )}
         </main>
       )}
     </WorkspaceContext.Provider>

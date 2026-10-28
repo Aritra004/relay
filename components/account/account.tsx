@@ -50,7 +50,7 @@ export function Account() {
   }
 
   return <main className="account-page">
-    <div className="account-topline"><Link className="account-brand" href="/">relay<span>.</span></Link><Link href="/">Local workspace →</Link></div>
+    <div className="account-topline"><Link className="account-brand" href="/">relay<span>.</span></Link><Link href="/offline">Cached workspaces →</Link></div>
     <p className="eyebrow">YOUR ACCOUNT</p>
     <h1>{data ? data.user.name : "Your workspaces"}</h1>
     {data && <div className="account-topline"><p className="account-intro">{data.user.email}</p><button className="secondary-button" onClick={signOut} disabled={busy}>Sign out</button></div>}
@@ -67,6 +67,6 @@ export function Account() {
         <button className="primary-button" disabled={busy}>{busy ? "Please wait…" : "Create workspace"}</button>
       </form></section>
     </>}
-    <p className="account-local-note">Your local workspace is saved separately on this device. Its pending changes are preserved when you sign in or out.</p>
+    <p className="account-local-note">Workspaces you open are cached on this device. Their pending changes are preserved when you sign in or out.</p>
   </main>;
 }

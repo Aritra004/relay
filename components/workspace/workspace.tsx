@@ -10,7 +10,7 @@ import {
 } from "react";
 import { flushSync } from "react-dom";
 import Link from "next/link";
-import { Icon, RelayMark } from "./icons";
+import { Icon } from "./icons";
 import { ItemEditor } from "./item-editor";
 import { InlineItemCreator } from "./inline-item-creator";
 import { Panel } from "./panel";
@@ -19,7 +19,6 @@ import { SyncStatus } from "./sync-status";
 import { WorkspacePresence } from "./workspace-presence";
 import { SyncInspector } from "./sync-inspector";
 import { SyncStatusPreview } from "./sync-status-preview";
-import { WorkspaceDeveloperTools } from "./workspace-developer-tools";
 import {
   BoardDrag,
   DraggableItem,
@@ -53,32 +52,7 @@ function StageMark({ stage }: { stage: StageId }) {
   );
 }
 
-function Initial({ name }: { name: string }) {
-  return (
-    <span
-      className={`initial initial--${["You", "Mina", "Alex", "Unassigned"].includes(name) ? name.toLowerCase() : "member"}`}
-      aria-hidden="true"
-    >
-      {name === "Unassigned" ? "–" : name.slice(0, 1)}
-    </span>
-  );
-}
-
 export function Workspace() {
-  const [resetKey, setResetKey] = useState(0);
-  return (
-    <WorkspaceContent
-      key={resetKey}
-      onDeveloperReset={() => setResetKey((key) => key + 1)}
-    />
-  );
-}
-
-function WorkspaceContent({
-  onDeveloperReset,
-}: {
-  onDeveloperReset: () => void;
-}) {
   const store = useWorkspaceStore();
   const state = useWorkspaceSelector((snapshot) => snapshot);
   const { workspace, selectedItemId } = state;
@@ -353,14 +327,6 @@ function WorkspaceContent({
         Skip to workflow
       </a>
       <aside className="navigation-rail" aria-label="Relay navigation">
-        <Link
-          className="brand-mark"
-          href="/"
-          aria-label="Relay home"
-          title="Relay"
-        >
-          <RelayMark />
-        </Link>
         <nav className="rail-links" aria-label="Workspace views">
           <button
             className={`rail-button ${!onlyMine ? "is-active" : ""}`}
@@ -396,7 +362,7 @@ function WorkspaceContent({
             aria-label="Cached workspaces"
             title="Cached workspaces"
           >
-            <Icon name="grid" />
+            <Icon name="hard-drive" />
           </a>
           <Link
             className="rail-button"
@@ -404,7 +370,7 @@ function WorkspaceContent({
             aria-label="Your account and online workspaces"
             title="Your account and online workspaces"
           >
-            <Icon name="person" />
+            <Icon name="cloud" />
           </Link>
           <button
             className="rail-button"
@@ -416,16 +382,8 @@ function WorkspaceContent({
           </button>
           <span
             className="account-mark"
-            title={
-              workspace.source === "server"
-                ? "Your local account"
-                : process.env.NODE_ENV === "development" ? "You · demo member" : "You · local workspace"
-            }
-            aria-label={
-              workspace.source === "server"
-                ? "Your local account"
-                : process.env.NODE_ENV === "development" ? "You, demo member" : "You, local workspace"
-            }
+            title="Your local account"
+            aria-label="Your local account"
           >
             Y
           </span>
@@ -442,42 +400,9 @@ function WorkspaceContent({
               /
             </span>
             <span className="workspace-name">{workspace.name}</span>
-            <span className="demo-label">
-              {workspace.source === "server" ? "CACHED" : process.env.NODE_ENV === "development" ? "DEMO" : "LOCAL"}
-            </span>
           </div>
           <div className="workspace-members">
-            {workspace.source === "server" ? <WorkspacePresence /> : <>
-            <ul
-              className="member-initials"
-              aria-label={
-                workspace.source === "server"
-                  ? "Workspace members"
-                  : process.env.NODE_ENV === "development" ? "Demo collaborators" : "Local workspace member"
-              }
-            >
-              {workspace.members.map((name, index) => (
-                <li
-                  key={`${index}-${name}`}
-                  title={
-                    workspace.source === "server"
-                      ? name
-                      : process.env.NODE_ENV === "development" ? `${name} · demo member` : name
-                  }
-                >
-                  <Initial name={name} />
-                  <span className="sr-only">
-                    {name}
-                    {workspace.source !== "server" && process.env.NODE_ENV === "development" ? ", demo member" : ""}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <span className="member-count">
-              {workspace.members.length}{" "}
-              {workspace.members.length === 1 ? "member" : "members"}
-            </span>
-            </>}
+            <WorkspacePresence />
           </div>
           <button
             className="sync-button"
@@ -499,18 +424,15 @@ function WorkspaceContent({
             aria-labelledby="workspace-title"
           >
             <div>
-              <div className="eyebrow">THE SHARED WORKSPACE</div>
               <h1 id="workspace-title">
                 {workspaceEmpty
                   ? "Your workspace starts here"
                   : "Good work moves forward"}
                 <span className="heading-period">.</span>
               </h1>
-              <p>
-                {workspaceEmpty
-                  ? "Add your first item to any stage. Take it from there."
-                  : "From the first idea to the final detail. One step at a time."}
-              </p>
+              {workspaceEmpty && (
+                <p>Add your first item to any stage. Take it from there.</p>
+              )}
             </div>
           </section>
 
@@ -765,12 +687,6 @@ function WorkspaceContent({
           </BoardDrag>
 
           <div className="workspace-bottom-note">
-            <span>
-              <span className="small-cross" aria-hidden="true">
-                ✳
-              </span>{" "}
-              A little structure. Space to make things happen.
-            </span>
             <span className="keyboard-hint">
               <kbd>↑↓←→</kbd> to navigate<span className="hint-divider">·</span>
               <kbd>Shift + arrows</kbd> to move
@@ -781,9 +697,7 @@ function WorkspaceContent({
         <footer className="workspace-footer">
           <span className="footer-session">
             <Icon name="monitor" width="14" height="14" />
-            {workspace.source === "server"
-              ? "Cached workspace"
-              : "Demo workspace"}
+            Cached workspace
             <span className="footer-separator">/</span>
             <span>
               {state.storageError
@@ -829,12 +743,7 @@ function WorkspaceContent({
       )}
       {panel === "sync" && (
         <SyncInspector onClose={() => setPanel(null)}>
-          {process.env.NODE_ENV === "development" && (
-            <>
-              <WorkspaceDeveloperTools onReset={onDeveloperReset} />
-              <SyncStatusPreview />
-            </>
-          )}
+          {process.env.NODE_ENV === "development" && <SyncStatusPreview />}
         </SyncInspector>
       )}
       {panel === "help" && (
