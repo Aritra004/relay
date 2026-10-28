@@ -50,9 +50,6 @@
 .account-page--narrow {
   max-width: 420px;
 }
-.account-page--wide {
-  width: min(100% - 48px, 1320px);
-}
 .account-brand {
   display: inline-block;
   font-size: 28px;
@@ -127,8 +124,7 @@
   border-top: 1px solid var(--border);
   margin-top: 24px;
 }
-.account-workspaces,
-.account-members {
+.account-workspaces {
   list-style: none;
   padding: 0;
 }
@@ -141,8 +137,7 @@
   border-bottom: 1px solid var(--line);
   text-decoration: none;
 }
-.account-workspaces span,
-.account-members span {
+.account-workspaces span {
   color: var(--secondary);
   font-size: 12px;
 }
@@ -155,39 +150,131 @@
   padding: 8px 0;
   color: var(--accent);
 }
-.online-board {
+
+/* Home: a brief hand-off to the last opened workspace. */
+.home-loading {
   display: grid;
-  grid-template-columns: repeat(5, minmax(150px, 1fr));
-  overflow-x: auto;
-  margin-top: 32px;
+  gap: 10px;
+  justify-items: start;
+}
+.home-loading p {
+  margin: 0;
+}
+.home-links {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+}
+.home-links a {
+  color: var(--accent);
+}
+
+/* Cached workspaces: the offline shell in the visual language of the board. */
+.offline-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 42px;
+}
+.offline-topline .account-brand {
+  margin-bottom: 0;
+}
+.offline-connection {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font:
+    10px var(--font-geist-mono),
+    monospace;
+  letter-spacing: 0.5px;
+  color: var(--secondary);
+}
+.offline-connection[data-online="false"] {
+  color: var(--amber);
+}
+.offline-workspaces {
+  margin: 28px 0 0;
   border-top: 1px solid var(--border);
 }
-.online-stage {
-  padding: 24px 18px;
-  border-right: 1px solid var(--border);
+.offline-workspaces a {
+  align-items: center;
 }
-.online-stage:first-child {
-  border-left: 1px solid var(--border);
+.offline-workspaces .offline-workspace-name {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  color: var(--foreground);
+  font-size: 14px;
 }
-.online-stage h2 {
+.offline-workspaces .offline-workspace-name strong {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.offline-workspaces .offline-tag {
   font:
-    11px var(--font-geist-mono),
+    9px var(--font-geist-mono),
     monospace;
-  letter-spacing: 1px;
+  letter-spacing: 0.4px;
+  color: var(--accent);
+  white-space: nowrap;
 }
-.online-stage p {
+.offline-workspaces .offline-workspace-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
   font-size: 12px;
-  color: var(--secondary);
-  line-height: 1.7;
+  white-space: nowrap;
 }
-.online-stage article {
-  margin-top: 24px;
+.offline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.account-page .offline-actions a {
+  text-decoration: none;
+}
+.account-page .offline-actions a.primary-button {
+  color: #fff;
+}
+.account-page .offline-actions a.secondary-button {
+  color: var(--foreground);
+}
+.offline-path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: 40px;
+  padding-top: 18px;
   border-top: 1px solid var(--line);
-  padding-top: 12px;
+  color: var(--secondary);
 }
-.online-empty {
-  padding: 36px 0;
-  color: var(--muted);
+.offline-path-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font:
+    9px var(--font-geist-mono),
+    monospace;
+  letter-spacing: 0.6px;
+}
+.offline-path-line .path-line {
+  width: 72px;
+}
+.offline-path-line .path-line--joined {
+  width: 153px;
+}
+.offline-path[data-online="false"] .path-break {
+  color: var(--amber);
+}
+.offline-path-note {
+  font-size: 12px;
+  line-height: 1.6;
 }
 @media (max-width: 600px) {
   .account-page {
@@ -316,21 +403,14 @@ kbd {
   align-items: center;
   background: var(--surface-secondary);
 }
-.brand-mark {
-  height: 65px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--foreground);
-}
 .rail-links {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 9px;
-  padding-top: 28px;
+  /* Keeps the header row clear so the rail aligns with the 65px header. */
+  padding-top: 93px;
 }
 .rail-button {
   width: 36px;
@@ -417,16 +497,6 @@ kbd {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.demo-label {
-  font:
-    9px var(--font-geist-mono),
-    monospace;
-  color: var(--secondary);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 3px 5px;
-  letter-spacing: 0.4px;
 }
 .sync-button {
   display: flex;
@@ -565,55 +635,6 @@ h1 {
   border-right: 1px solid var(--border);
   color: var(--secondary);
   font-size: 10px;
-}
-.member-initials {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.member-initials li {
-  display: flex;
-}
-.member-initials li + li {
-  margin-left: -5px;
-}
-.member-count {
-  white-space: nowrap;
-}
-.member-initials .initial {
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--background);
-  border-radius: 50%;
-  font-size: 10px;
-}
-.initial {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  font-size: 9px;
-  font-weight: 500;
-  flex-shrink: 0;
-}
-.initial--you {
-  background: #e5e7f0;
-  color: #4e6092;
-}
-.initial--mina {
-  background: #e9e3ed;
-  color: #80698b;
-}
-.initial--alex {
-  background: #e0e9e2;
-  color: #5e7a68;
-}
-.initial--unassigned {
-  background: var(--surface-secondary);
-  color: var(--secondary);
 }
 .workspace-toolbar {
   flex-shrink: 0;
@@ -1102,12 +1123,8 @@ h1 {
   align-items: center;
   gap: 8px;
 }
-.small-cross {
-  font-size: 18px;
-  color: #81877b;
-  margin-right: 3px;
-}
 .keyboard-hint {
+  margin-left: auto;
   font-size: 9px;
 }
 .hint-divider {
@@ -1298,14 +1315,6 @@ h1 {
   align-items: center;
   gap: 8px;
   margin-top: 22px;
-}
-.panel-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 20px 27px;
-  border-top: 1px solid var(--border);
 }
 .secondary-button {
   display: inline-flex;
@@ -1655,15 +1664,9 @@ h1 {
     width: 95px;
   }
 }
-@media (max-width: 1000px) {
-  .member-count {
-    display: none;
-  }
-}
 @media (max-width: 900px) {
   .wordmark,
-  .header-slash,
-  .demo-label {
+  .header-slash {
     display: none;
   }
 }
@@ -1689,15 +1692,8 @@ h1 {
   .navigation-rail {
     width: 48px;
   }
-  .brand-mark {
-    height: 59px;
-  }
-  .brand-mark svg {
-    width: 23px;
-    height: 23px;
-  }
   .rail-links {
-    padding-top: 20px;
+    padding-top: 79px;
   }
   .rail-button {
     width: 32px;
@@ -1765,11 +1761,6 @@ h1 {
     margin: 0;
     padding: 0;
     border: 0;
-  }
-  .member-initials .initial {
-    width: 25px;
-    height: 25px;
-    font-size: 9px;
   }
   .eyebrow {
     font-size: 8px;
@@ -1915,9 +1906,6 @@ h1 {
   .workspace-bottom-note .keyboard-hint {
     display: none;
   }
-  .small-cross {
-    font-size: 14px;
-  }
   .workspace-footer {
     min-height: 36px;
   }
@@ -2034,62 +2022,6 @@ h1 {
 }
 .sync-status--local {
   color: #626863;
-}
-
-.developer-reset-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.developer-reset-confirmation {
-  margin-top: 12px;
-}
-.developer-reset-error {
-  color: #a64f32;
-}
-.developer-queue {
-  margin-top: 20px;
-}
-.developer-queue h3 {
-  font-size: 12px;
-  font-weight: 600;
-}
-.developer-queue > p {
-  margin-top: 8px;
-  line-height: 1.6;
-}
-.developer-queue ol {
-  list-style: none;
-  padding: 0;
-  margin-top: 12px;
-}
-.developer-queue li {
-  border-top: 1px solid var(--border);
-  padding: 10px 0;
-}
-.developer-queue summary {
-  font-family: var(--font-geist-mono), monospace;
-  overflow-wrap: anywhere;
-}
-.developer-queue summary span {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-}
-.developer-queue pre {
-  margin-top: 8px;
-  padding: 10px;
-  max-height: 320px;
-  overflow: auto;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  background: var(--background, #f4f1ea);
-  font-size: 10px;
-  line-height: 1.6;
-}
-.developer-queue pre:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 /* Unresolved work stays visible without interrupting the rest of the board. */
 .remote-change-label {

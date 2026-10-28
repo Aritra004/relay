@@ -1,6 +1,5 @@
-import { Workspace } from "@/components/workspace/workspace";
-import { WorkspaceProvider } from "@/components/workspace/workspace-provider";
+import { Home } from "@/components/account/home";
 
-export default function Home() {
-  return <WorkspaceProvider><Workspace /></WorkspaceProvider>;
+export default function HomePage() {
+  return <Home />;
 }
